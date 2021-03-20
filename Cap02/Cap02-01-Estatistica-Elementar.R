@@ -6,7 +6,7 @@
 # Configurando o diretório de trabalho
 # Coloque entre aspas o diretório de trabalho que você está usando no seu computador
 # Não use diretórios com espaço no nome
-setwd("~/Dropbox/DSA/Business-Analytics2.0/Cap02/R")
+setwd("~/Desktop/DSA/manga-business-analytics/Cap02")
 getwd()
 
 
@@ -43,7 +43,8 @@ median(dataset$age)
 # que corta os primeiros 25% dos dados quando é classificado em ordem crescente. 
 # O segundo quartil, ou mediana, é o valor que corta os primeiros 50%. 
 # O terceiro quartil, ou quartil superior, é o valor que corta os primeiros 75%.
-quantile(dataset$age)     
+quantile(dataset$age)
+quantile(dataset$age,.75)     
 quantile(dataset$age, c(.32, .57, .98)) 
 
 # O intervalo (range) de uma variável é a diferença de seus maiores e menores valores de dados. 
@@ -123,12 +124,91 @@ hist(dataset$pressure)
 # A distribuição dos dados é normal?
 
 # Dados de exemplo
+set.seed(140)
 dados <- rnorm(n = 10000, mean = 55, sd = 4.5)
 View(dados)
 
-# Solução na próxima aula!
+# Transformando a variavel dados de double para dataframe
+dataset <- data.frame(dados)
+View(dataset)
+summary(dataset)
+
+# Renomeando a coluna
+colnames(dataset) <- c("Medida")
+View(dataset)
+
+# Estatísticas elementares
+mean(dataset$Medida)
+median(dataset$Medida)
+var(dataset$Medida)
+sd(dataset$Medida)
+
+# Moda
+table(as.vector(dataset$Medida))
+table(as.vector(round(dataset$Medida)))
+moda <- table(as.vector(round(dataset$Medida)))
+names(moda)[moda == max(moda)]
+
+# Sumário
+summary(dataset)
+
+# Assimetria e Curtose
+library(e1071)
+
+skewness(dados)
+kurtosis(dados)
+
+# Funcao describe
+library(psych)
+describe(dados)
+
+########## Assimetria ########## 
+
+# Assimetria é o grau de afastamento de uma distribuição da unidade de assimetria.
+# Uma Distribuição é Simétrica quando seus valores de Média, Mediana e Moda coincidem. 
+# A Assimetria, dá, portanto, uma indicação da inclinação da distribuição.
+
+# O coeficiente de assimetria (skewness) permite distinguir as distribuições assimétricas. 
+# Um valor negativo indica que a cauda do lado esquerdo da função densidade de probabilidade 
+# é maior que a do lado direito. Um valor positivo para a assimetria indica que a cauda do 
+# lado direito é maior que a do lado esquerdo. Um valor nulo indica que os valores são 
+# distribuídos de maneira relativamente iguais em ambos os lados da média, mas não implica 
+# necessariamente, uma distribuição simétrica.
+
+# A assimetria dos dados simulados é negativa e próxima de zero. 
+# Isso conclui que os dados estão próximos de uma distribuição gaussiana (formato de sino), 
+# mas ligeiramente inclinados para a esquerda. 
 
 
+########## Curtose ########## 
 
+# Curtose é  uma medida de dispersão que caracteriza o "achatamento" da curva da função 
+# de distribuição. O que significa analisar um conjunto quanto à Curtose?
 
+# Significa apenas verificar o “grau de achatamento da curva”. Ou seja, saber se a Curva de 
+# Frequência que representa o conjunto é mais “afilada” ou mais “achatada” em relação a uma 
+# Curva Padrão, chamada de Curva Normal! 
 
+# Uma curva (um conjunto) poderá ser, quanto à sua Curtose: 
+
+# Mesocúrtica: ou de curtose média! 
+# Será essa a nossa Curva Normal. “Meso” lembra meio! Esta curva está no meio termo: 
+# nem muito achatada, nem muito afilada;
+
+# Platicúrtica: é a curva mais achatada. Seu desenho lembra o de um prato emborcado. 
+# Então “prato” lembra “plati” e “plati” lembra “platicúrtica”;
+
+# Leptocúrtica: é a curva mais afilada! 
+
+# Quando se trata de Curtose, não há como extrairmos uma conclusão sobre qual será a situação 
+# da distribuição – se mesocúrtica, platicúrtica ou leptocúrtica – apenas conhecendo os valores 
+# da Média, Moda e Mediana. 
+
+# Histograma
+library(ggplot2)
+
+# Plot
+ggplot(dataset, aes(x = dataset$Medida), binwidth = 20) + 
+  geom_histogram(aes(y = ..density..), fill = 'red', alpha = 0.5) + 
+  geom_density(colour = 'blue') + xlab(expression(bold('Dados de Exemplo'))) + 
+  ylab(expression(bold('Densidade')))
